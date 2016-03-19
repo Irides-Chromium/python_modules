@@ -5,12 +5,12 @@
 ###     Up to 61 Scales (2 to 62)
 ###     Using List as Joining Tool(USED AS DEBUG)
 ###     Caps Recognition and Same Output Format
+
 def count(string):
     count = 0
     for i in string:
         count += 1
     return count
-
 
 def scale(cur, res, num):
 # Default Settings
@@ -103,11 +103,12 @@ def scale(cur, res, num):
                 num = int(num/int(res))
             num = ''.join(l)
     if Defined == False:
+        raise Exception("SCALE_OUT_OF_DEFINED_BOUND");
         return 'INTERGER NOT DEFINED'
     if Translation_ERROR == True:
-        return 'TRANSLATION_ERROR'
+        raise Exception("CANNOT_CAST_STR_TO_INT");
     if Out_Of_Index_ERROR == True:
-        return 'OUT_OF_INDEX'
+        raise Exception("SCALE_OUT_OF_BOUND");
     if Translation_ERROR == False and\
     Out_Of_Index_ERROR == False and\
     Defined == True:

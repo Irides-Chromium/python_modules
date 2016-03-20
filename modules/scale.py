@@ -5,6 +5,7 @@
 ###     Up to 61 Scales (2 to 62)
 ###     Using List as Joining Tool(USED AS DEBUG)
 ###     Caps Recognition and Same Output Format
+### For the function parameters, `cur` represents the current (input) base, `res` represents the result (output) base, and `num` represents the current (input) number.
 
 def count(string):
     count = 0
@@ -27,13 +28,11 @@ def scale(cur, res, num):
 
     # From
     if cur > 62 or res > 62: Defined = False
-    try:
-        str(num)
-    except:
-        if num.count('.') == 1:
-            Float =True
-        if num.count('-') == 1:
-            Positive = False
+    num = int(num)
+    if num.count('.') == 1:
+        Float =True
+    if num.count('-') == 1:
+        Positive = False
     if cur > 36: inmode = 1
     if res > 36: outmode = 1
     l = str(num)

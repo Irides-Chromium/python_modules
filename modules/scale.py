@@ -1,11 +1,11 @@
-### Rev: 4.0
-### Author: <zhq>
-### FEATURES:
-###     Errors Included
-###     Up to 61 Scales (2 to 62)
-###     Using List as Joining Tool(USED AS DEBUG)
-###     Caps Recognition and Same Output Format
-### For the function parameters, `cur` represents the current (input) base, `res` represents the result (output) base, and `num` represents the current (input) number.
+### rev: 4.0
+### author: <zhq>
+### features:
+###     errors included
+###     up to 61 scales (2 to 62)
+###     using list as joining tool(used as debug)
+###     caps recognition and same output format
+### for the function parameters, `cur` represents the current (input) base, `res` represents the result (output) base, and `num` represents the current (input) number.
 
 def count(string):
     count = 0
@@ -14,101 +14,93 @@ def count(string):
     return count
 
 def scale(cur, res, num):
-# Default Settings
+# default settings
     cur = int(cur)
     res = int(res)
-    inmode = 0
-    outmode = 0
-    CapsFlag = True
-    Defined = True
-    Out_Of_Index_ERROR = False
-    Translation_ERROR = False
-    Float = False
-    Positive = True
+    inmode = False
+    outmode = False
+    caps = True
+    defined = True
+    out_of_index = False
+    trans_error = False
+    _float = False
+    positive = True
 
-    # From
-    if cur > 62 or res > 62: Defined = False
+    # from
+    if cur > 62 or res > 62: defined = False
     num = int(num)
-    if num.count('.') == 1:
-        Float =True
-    if num.count('-') == 1:
-        Positive = False
-    if cur > 36: inmode = 1
-    if res > 36: outmode = 1
     l = str(num)
+    if l.count('.') == 1: _float = True
+    if l.count('-') == 1: positive = False
+    if cur > 36: inmode = True
+    if res > 36: outmode = True
     num = 0
     n = count(l)
     
-    if inmode == 1:
+    if inmode == True:
         for i in range(0, n):
             try: b = ord(l[i])
-            except: Translation_ERROR = True
-            if b >= 65 and b <= 91:
-                a = b - 29
-            elif b >= 97 and b <= 122:
-                a = b - 87
+            except: trans_error = True
+            if b >= 65 and b <= 91: a = b - 29
+            elif b >= 97 and b <= 122: a = b - 87
             else: a = int(chr(b))
-            if a >= cur: Out_Of_Index_ERROR = True
-            num += a*int(cur)**(n-i-1)
+            if a >= cur: out_of_index = True
+            num += a * int(cur) ** (n - i - 1)
             num = int(num)
             b = 0
             a = 0
     else:
         for i in range(0, n):
             try: b = ord(l[i])
-            except: Translation_ERROR = True
+            except: trans_error = True
             if b >= 65 and b <= 91:
                 a = b - 55
-                CapsFlag = True
+                caps = True
             elif b >= 97 and b <= 122:
                 a = b - 87
-                CapsFlag = False
+                caps = False
             else: a = int(chr(b))
-            if a >= cur: Out_Of_Index_ERROR = True
-            num += a*int(cur)**(n-i-1)
+            if a >= cur: out_of_index = True
+            num += a * int(cur) ** (n - i - 1)
             num = int(num)
             b = 0
             a = 0
 
-    # To
+    # to
     if res != 10:
         l = []
         for i in range(1, 17):
-            if int(res)**i > num:
+            if int(res) ** i > num:
                 n = i
                 break
         a = 0
-        if outmode == 1:
+        if outmode == True:
             for i in range(1, n+1):
-                a = num%int(res)
+                a = num % int(res)
                 b = a
-                if a >= 10 and a <= 35:
-                    b = chr(int(a + 87))
-                if a >= 36 and a <= 61:
-                    b = chr(int(a + 29))
+                if a >= 10 and a <= 35: b = chr(int(a + 87))
+                if a >= 36 and a <= 61: b = chr(int(a + 29))
                 l = [str(b)] + l
-                num = int(num/int(res))
+                num = int(num / int(res))
             num = ''.join(l)
         else:
-            for i in range(1, n+1):
-                a = num%int(res)
+            for i in range(1, n + 1):
+                a = num % int(res)
                 b = a
                 if a >= 10 and a <= 35:
-                    if CapsFlag == True:
-                        b = chr(int(a + 55))
-                    if CapsFlag == False:
-                        b = chr(int(a + 87))
+                    if caps == True: b = chr(int(a + 55))
+                    if caps == False: b = chr(int(a + 87))
                 l = [str(b)] + l
-                num = int(num/int(res))
+                num = int(num / int(res))
             num = ''.join(l)
-    if Defined == False:
+    if defined == False:
         raise Exception("SCALE_OUT_OF_DEFINED_BOUND");
-        return 'INTERGER NOT DEFINED'
-    if Translation_ERROR == True:
+        return 'interger not defined'
+    if trans_error == True:
         raise Exception("CANNOT_CAST_STR_TO_INT");
-    if Out_Of_Index_ERROR == True:
+    if out_of_index == True:
         raise Exception("SCALE_OUT_OF_BOUND");
-    if Translation_ERROR == False and\
-    Out_Of_Index_ERROR == False and\
-    Defined == True:
+    if trans_error == False and\
+    out_of_index == False and\
+    defined == True:
         return num

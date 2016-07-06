@@ -1,4 +1,6 @@
-### rev: 4.0
+#!/usr/bin/python3
+
+### rev: 5.0
 ### author: <zhq>
 ### features:
 ###     errors included
@@ -7,100 +9,57 @@
 ###     caps recognition and same output format
 ### for the function parameters, `cur` represents the current (input) base, `res` represents the result (output) base, and `num` represents the current (input) number.
 
-def count(string):
-    count = 0
-    for i in string:
-        count += 1
-    return count
-
 def scale(cur, res, num):
-# default settings
+# Default Settings
+    from math import floor
     cur = int(cur)
     res = int(res)
-    inmode = False
-    outmode = False
-    caps = True
-    defined = True
-    out_of_index = False
-    trans_error = False
-    _float = False
-    positive = True
+    num = str(num)
+    error = iscaps = False
+    defined = positive = True
 
-    # from
-    if cur > 62 or res > 62: defined = False
-    num = int(num)
-    l = str(num)
-    if l.count('.') == 1: _float = True
-    if l.count('-') == 1: positive = False
-    if cur > 36: inmode = True
-    if res > 36: outmode = True
-    num = 0
-    n = count(l)
-    
-    if inmode == True:
-        for i in range(0, n):
-            try: b = ord(l[i])
-            except: trans_error = True
-            if b >= 65 and b <= 91: a = b - 29
-            elif b >= 97 and b <= 122: a = b - 87
-            else: a = int(chr(b))
-            if a >= cur: out_of_index = True
-            num += a * int(cur) ** (n - i - 1)
-            num = int(num)
-            b = 0
-            a = 0
-    else:
-        for i in range(0, n):
-            try: b = ord(l[i])
-            except: trans_error = True
-            if b >= 65 and b <= 91:
-                a = b - 55
-                caps = True
-            elif b >= 97 and b <= 122:
-                a = b - 87
-                caps = False
-            else: a = int(chr(b))
-            if a >= cur: out_of_index = True
-            num += a * int(cur) ** (n - i - 1)
-            num = int(num)
-            b = 0
-            a = 0
+    # Input
+    if cur > 64 or res > 64: defined = False
+    if num.count("-") == 1:
+        positive = False
+        num = num[1:]
+    inmode = True if cur > 36 else False
+    outmode = True if res > 36 else False
+    result = 0
+    num_of_digit = len(num)
 
-    # to
+    if cur != 10:
+        for i in range(num_of_digit):
+            try: value = ord(num[i])
+            except: error = True
+            if value >= 48 and value <= 57: value -= 48
+            elif value >= 97 and value <= 122: value -= 87
+            elif inmode:
+                if value >= 65 and value <= 91: value -= 29
+                elif value == 64: value = 62
+                elif value == 95: value = 63
+            elif value >= 65 and value <= 91: value -= 55
+            if value >= cur: error = True
+            result += value * cur ** (num_of_digit - i - 1)
+            value = 0
+
+    # Output
     if res != 10:
-        l = []
-        for i in range(1, 17):
-            if int(res) ** i > num:
-                n = i
-                break
-        a = 0
-        if outmode == True:
-            for i in range(1, n+1):
-                a = num % int(res)
-                b = a
-                if a >= 10 and a <= 35: b = chr(int(a + 87))
-                if a >= 36 and a <= 61: b = chr(int(a + 29))
-                l = [str(b)] + l
-                num = int(num / int(res))
-            num = ''.join(l)
-        else:
-            for i in range(1, n + 1):
-                a = num % int(res)
-                b = a
-                if a >= 10 and a <= 35:
-                    if caps == True: b = chr(int(a + 55))
-                    if caps == False: b = chr(int(a + 87))
-                l = [str(b)] + l
-                num = int(num / int(res))
-            num = ''.join(l)
-    if defined == False:
-        raise Exception("SCALE_OUT_OF_DEFINED_BOUND");
-        return 'interger not defined'
-    if trans_error == True:
-        raise Exception("CANNOT_CAST_STR_TO_INT");
-    if out_of_index == True:
-        raise Exception("SCALE_OUT_OF_BOUND");
-    if trans_error == False and\
-    out_of_index == False and\
-    defined == True:
-        return num
+        num = int(result or num)
+        result = ""
+        value = 0
+        while num > 0:
+            value = num % res
+            if value < 10: digit = chr(value + 48)
+            elif value <= 35: digit = chr(value + 87)
+            elif outmode:
+                if value <= 61: digit = chr(value + 29)
+                elif value == 62: digit = '@'
+                elif value == 63: digit = '_'
+            elif iscaps: digit = chr(value + 55)
+            result = digit + result
+            num = floor(num / res)
+    if error: raise Exception("ERROR")
+    elif defined == True:
+        if not positive: num = "-" + str(num)
+        return result

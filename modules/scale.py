@@ -4,24 +4,23 @@
 ### author: <zhq>
 ### features:
 ###     errors included
-###     up to 63 scales (2 to 64)
-###     using list as joining tool(used as debug)
-###     caps recognition and same output format
+###     up to 63 bases (2 to 64)
+###     caps recognition and same output format (deprecated)
 ### for the function parameters, `cur` represents the current (input) base, `res` represents the result (output) base, and `num` represents the current (input) number.
 
 def scale(cur, res, num):
 #         int, int, str -> str
 # Default Settings
     num = str(num)
-    error = iscaps = False
-    defined = positive = True
+    iscaps = False
+    positive = True
 
     # Input
     if cur == res: return num
     if num == "0": return "0"
     if cur not in range(2, 65) or res not in range(2, 65):
         raise Exception("Base not defined.")
-    if num.count("-") == 1:
+    if num[0] == "-":
         positive = False
         num = num[1:]
     result = 0
@@ -53,7 +52,5 @@ def scale(cur, res, num):
             elif value == 63: digit = 95
             result = chr(digit) + result
             num //= res
-    if error: raise Exception("ERROR")
-    elif defined:
-        if not positive: result = "-" + result
-        return result
+    if not positive: result = "-" + result
+    return result

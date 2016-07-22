@@ -18,8 +18,7 @@ def scale(cur, res, num):
     # Input
     if cur == res: return num
     if num == "0": return "0"
-    if cur not in range(2, 65) or res not in range(2, 65):
-        raise Exception("Base not defined.")
+    assert cur in range(2, 65) and res in range(2, 65), "Base not defined."
     if num[0] == "-":
         positive = False
         num = num[1:]
@@ -44,13 +43,12 @@ def scale(cur, res, num):
         num = int(result or num)
         result = ""
         while num > 0:
-            value = num % res
+            num, value = divmod(num, res)
             if value < 10: digit = value + 48
             elif value < 36: digit = value + 55
             elif value < 62: digit = value + 61
             elif value == 62: digit = 64
             elif value == 63: digit = 95
             result = chr(digit) + result
-            num //= res
     if not positive: result = "-" + result
     return result

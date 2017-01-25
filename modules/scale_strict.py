@@ -29,12 +29,8 @@ def scale(cur, res, num):
         for i in num[::-1]:
             value = ord(i)
             if value in range(48, 58): value -= 48
-            elif value in range(65, 92):
-                if cur <= 36: iscaps = True
-                value -= 55
-            elif value in range(97, 123):
-                if cur <= 36: value -= 87
-                else: value -= 61
+            elif value in range(65, 92): value -= 55
+            elif value in range(97, 123): value -= 61
             elif value == 64: value = 62
             elif value == 95: value = 63
             assert value <= cur, "Digit larger than original base."
@@ -48,13 +44,11 @@ def scale(cur, res, num):
         result = ""
         while num > 0:
             num, value = divmod(num, res)
-            if value < 10: value += 48
-            elif value < 36:
-                if iscaps: value += 55
-                else: value += 87
-            elif value < 62: value += 61
-            elif value == 62: value = 64
-            elif value == 63: value = 95
-            result = chr(value) + result
+            if value < 10: digit = value + 48
+            elif value < 36: digit = value + 55
+            elif value < 62: digit = value + 61
+            elif value == 62: digit = 64
+            elif value == 63: digit = 95
+            result = chr(digit) + result
     if not positive: result = "-" + result
     return result

@@ -12,7 +12,7 @@ def scale(cur, res, num):
 #         int, int, str -> str
 # Default Settings
     num = str(num)
-    iscaps = False
+    iscaps = True   # To be compatible with higher bases
     positive = True
 
     # Input
@@ -37,7 +37,7 @@ def scale(cur, res, num):
                 else: value -= 61
             elif value == 64: value = 62
             elif value == 95: value = 63
-            assert value <= cur, "Digit larger than original base."
+            assert value <= cur, "Digit larger than original base. v:%d b:%d" % (value, cur)
             result += value * unit
             unit *= cur
         result = str(result)
